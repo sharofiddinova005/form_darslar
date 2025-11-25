@@ -3,12 +3,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit News</title>
+    <title>Title</title>
 </head>
 <body>
-    <h1>Edit News: {{ new.title }}</h1>
 
-    <form method="POST">
+    <form action="{%urls 'update_new.pk%}" method="post" enctype="">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Save</button>

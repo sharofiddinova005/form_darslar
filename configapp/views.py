@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.defaultfilters import title
 from django.views.generic import ListView
 
 from configapp.models import Category, News
@@ -9,28 +10,56 @@ from .forms import NewsForm, CategoryForm
 # NEWS VIEWLARI
 # ==============================================
 
+def add_new(request):
+    if request.method == 'POST':
+        print("=====================", request.POST)
+        form = NewsForm(request.POST, request.FILES)
+        if form.is_valid():
+            # form.save()
+            new=News.objects.create(**form.cleaned_data)
+            return redirect('home')
+    else:
+        form = NewsForm()
+
+    return render(request, 'add_new.html', {"form": form})
+
+
 def detail_new(request, pk):
-    new = get_object_or_404(News, pk=pk)
-    return render(request, 'detail_new.html', {"new": new})
+    new = get_object_or_404(News, id=pk)
+    context={
+        "new":new
+    }
+    return render(request, 'detail_new.html',context=context)
 
 
 def update_new(request, pk):
     new = get_object_or_404(News, pk=pk)
     if request.method == 'POST':
-        form = NewsForm(request.POST, instance=new)
+        form = NewsForm(request.FILES, request.POST, instance=new)
         if form.is_valid():
             form.save()
             return redirect('home')
     else:
         form = NewsForm(instance=new)
+        context={
+            'form':form,
+            'new':new
+        }
 
-    return render(request, 'update_new.html', {"form": form, "new": new})
+    return render(request, 'update_new.html', context=context)
 
 
 def del_new(request, pk):
     new = get_object_or_404(News, pk=pk)
     new.delete()
-    return redirect('home')  # o'chirishdan keyin index.html ga redirect qilish osonroq
+    news=News.objects.all()
+    category=Category.objects.all()
+    context={
+        "news":news,
+        "category":category,
+        "title":"NEWS TITLE"
+    }
+    return redirect(request,'index.html', context=context)
 
 
 class HomeNews(ListView):
@@ -72,8 +101,12 @@ def update_category(request, pk):
             return redirect('home')
     else:
         form = CategoryForm(instance=category)
+        context={
+            'form':form,
+            'category':category
+        }
 
-    return render(request, 'update_category.html', {"form": form, "category": category})
+    return render(request, 'update_category.html', context=context)
 
 
 def del_category(request, pk):
