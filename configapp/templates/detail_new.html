@@ -1,0 +1,17 @@
+<!-- templates/detail_new.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ new.title }}</title>
+</head>
+<body>
+    <h1>{{ new.title }}</h1>
+    <p>{{ new.content }}</p>
+    <p>Category: {{ new.category.name }}</p>
+
+    <a href="{% url 'update_new' new.id %}">Edit</a> |
+    <a href="{% url 'del_new' new.id %}">Delete</a> |
+    <a href="{% url 'home' %}">Back to home</a>
+</body>
+</html>
