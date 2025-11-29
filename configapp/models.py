@@ -1,27 +1,25 @@
 from django.db import models
 
-
-class Category(models.Model):
-    title = models.CharField(max_length=50)
+class University(models.Model):
+    name = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='universities/', null=True, blank=True)
+    description = models.TextField(blank=True)
 
     def __str__(self):
-        return self.title
-class News(models.Model):
-    title = models.CharField(max_length=50)
-    context = models.TextField(blank=True)
-    created_ed = models.DateTimeField(auto_now_add=True)
-    updated_ed = models.DateTimeField(auto_now=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    photo = models.ImageField(upload_to='photos/%Y/%m/%d/')
-    is_bool = models.BooleanField(default=True)
-    views = models.IntegerField(default=0)
+        return self.name
+
+class Group(models.Model):
+    university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='groups')
+    name = models.CharField(max_length=100)
+
     def __str__(self):
-        return self.title
+        return f"{self.university.name} - {self.name}"
 
-    class Meta:
-        verbose_name = "NEW"
-        verbose_name_plural = "NEWS"
-        ordering = ['-created_ed']
+class Student(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='students')
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    photo = models.ImageField(upload_to='students_photos/', blank=True, null=True)  # <-- qo'shildi
 
-
-
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
